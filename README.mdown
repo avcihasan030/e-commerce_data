@@ -1,0 +1,113 @@
+# E-commerce Data Analysis with SQL
+
+## Project Overview
+This project focuses on cleaning and analyzing an e-commerce transactions dataset using SQL. The dataset contains customer purchase records, including invoice details, product descriptions, and pricing information.
+
+## Dataset
+The dataset includes the following columns:
+- **InvoiceNo**: Unique invoice number
+- **StockCode**: Unique product identifier
+- **Description**: Product name
+- **Quantity**: Number of items purchased
+- **InvoiceDate**: Date and time of purchase
+- **UnitPrice**: Price per unit
+- **CustomerID**: Unique customer identifier
+- **Country**: Country of purchase
+
+## Project Workflow
+### 1. Data Cleaning
+To ensure data integrity, the following cleaning steps were performed:
+- **Duplicate Removal**: Identified and deleted duplicate records using `ROW_NUMBER()`.
+- **Handling Null Values**: Checked for missing values in critical columns (`UnitPrice`, `Quantity`, `Country`, `CustomerID`).
+- **Standardizing Data**:
+  - Cleaned and formatted `CustomerID` values.
+  - Removed invalid or missing customer records.
+- **Final Cleanup**: Dropped unnecessary columns and validated the dataset.
+
+### 2. Data Analysis
+After cleaning, several key business insights were extracted:
+
+#### a) Total Revenue Calculation
+```sql
+SELECT SUM(Quantity * UnitPrice) AS total_revenue FROM transactions_temp;
+```
+
+#### b) Top-Selling Products
+```sql
+SELECT Description, SUM(Quantity) AS TotalQuantitySold
+FROM transactions_temp
+GROUP BY Description
+ORDER BY TotalQuantitySold DESC
+LIMIT 10;
+```
+
+#### c) Most Valuable Customers (by Total Spend)
+```sql
+SELECT CustomerID, SUM(Quantity * UnitPrice) AS TotalSpent
+FROM transactions_temp
+GROUP BY CustomerID
+ORDER BY TotalSpent DESC
+LIMIT 10;
+```
+
+#### d) Sales by Country
+- **Top 10 Countries by Revenue**
+```sql
+SELECT Country, SUM(Quantity * UnitPrice) AS TotalSales
+FROM transactions_temp
+GROUP BY Country
+ORDER BY TotalSales DESC
+LIMIT 10;
+```
+- **Bottom 10 Countries by Revenue**
+```sql
+SELECT Country, SUM(Quantity * UnitPrice) AS TotalSales
+FROM transactions_temp
+GROUP BY Country
+ORDER BY TotalSales ASC
+LIMIT 10;
+```
+
+#### e) Monthly Sales Trends
+```sql
+SELECT DATE_FORMAT(InvoiceDate, '%Y-%m') AS Month, SUM(Quantity * UnitPrice) AS MonthlySales
+FROM transactions_temp
+GROUP BY Month
+ORDER BY Month;
+```
+
+### 3. Customer Segmentation (RFM Analysis)
+Recency-Frequency-Monetary (RFM) analysis was conducted to segment customers:
+```sql
+WITH RFM AS (
+    SELECT CustomerID,
+           DATEDIFF('2011-12-09', MAX(InvoiceDate)) AS Recency,
+           COUNT(DISTINCT InvoiceNo) AS Frequency,
+           SUM(Quantity * UnitPrice) AS Monetary
+    FROM transactions_temp
+    GROUP BY CustomerID
+)
+SELECT CustomerID,
+       Recency,
+       Frequency,
+       Monetary,
+       NTILE(4) OVER (ORDER BY Recency DESC) AS R_Score,
+       NTILE(4) OVER (ORDER BY Frequency) AS F_Score,
+       NTILE(4) OVER (ORDER BY Monetary) AS M_Score,
+       CONCAT(NTILE(4) OVER (ORDER BY Recency DESC),
+              NTILE(4) OVER (ORDER BY Frequency),
+              NTILE(4) OVER (ORDER BY Monetary)) AS RFM_Score
+FROM RFM
+ORDER BY RFM_Score;
+```
+
+## Conclusion
+This SQL-based project demonstrates effective data cleaning and exploratory analysis of e-commerce transaction data. The insights derived can help businesses understand customer behavior, optimize inventory, and enhance sales strategies.
+
+---
+### 💡 Next Steps:
+- **Data Visualization**: Use Python (Matplotlib, Seaborn) to create visual representations of trends.
+- **Predictive Analytics**: Apply machine learning to forecast sales or customer churn.
+
+Let me know if you have suggestions or improvements! 🚀
+

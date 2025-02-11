@@ -1,0 +1,20 @@
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore Python virtual environments
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore database dumps or large raw files
+*.sql
+*.db
+*.sqlite3
+data/raw_data.csv
+
+# Ignore DataSpell settings (optional)
+.idea/
