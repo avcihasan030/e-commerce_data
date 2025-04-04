@@ -44,7 +44,7 @@ FROM transactions_temp;
 SELECT * FROM transactions_temp WHERE UnitPrice IS NULL OR Quantity IS NULL;
 SELECT * FROM transactions_temp WHERE Country IS NULL;
 SELECT * FROM transactions_temp WHERE InvoiceNo IS NULL AND CustomerID IS NULL;
-SELECT * FROM transactions_temp2 WHERE InvoiceDate IS NULL;
+SELECT * FROM transactions_temp WHERE InvoiceDate IS NULL;
 
 -- Step 8: Standardizing Data
 -- Ensuring consistency in key columns
